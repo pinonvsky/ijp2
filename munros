@@ -1,0 +1,66 @@
+// IJP Assignment 1, Version 5.2.3, 05 Oct 2015
+package ijp.controller;
+import java.util.HashMap;
+import ijp.Picture;
+import ijp.service.Service;
+import ijp.service.ServiceFromProperties;
+import ijp.utils.Properties;
+import ijp.view.View;
+import ijp.view.ViewFromProperties;
+
+/**
+ * A template for implementing a controller for the PictureViewer application.
+ * 
+ * @author YOUR NAME HERE
+ * @version YOUR VERSION HERE
+ */
+public class MyController implements Controller {
+
+	private View view;
+	private Service service;
+	
+	private HashMap<Integer,String> hm;
+	
+	private String[] munros;
+
+	/**
+	 * Start the controller.
+	 */
+	public void start() {
+		
+		view = new ViewFromProperties(this);
+		service = new ServiceFromProperties();
+		
+		//call a method to add munros selections
+		this.addSubjects();
+		
+		view.start();
+	}
+	
+	public void addSubjects(){
+		hm = new HashMap<Integer,String>();
+		//add subjects from my.properties, then split them, then store them into "munros"
+		munros = Properties.get("Munros").split(",");
+		//create selectionIDs of munros and put them into the hashmap
+		for(int i=0;i < munros.length;i++){
+			hm.put(view.addSelection(munros[i].trim()),munros[i].trim());
+		}
+		
+		
+	}
+	
+	/**
+	 * Handle the specified selection from the interface.
+	 *
+	 * @param selectionID the id of the selected item
+	 */
+	
+	public void select(int selectionID) {
+		Picture picture = new Picture();
+		if(hm.containsKey(selectionID)){
+			picture = service.getPicture(hm.get(selectionID),1);
+			view.showPicture(picture);
+		}
+
+    }
+}

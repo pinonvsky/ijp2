@@ -1,0 +1,67 @@
+// IJP Assignment 1, Version 1.0, 29 Oct 2015
+package ijp.proxy;
+import java.util.HashMap;
+import java.util.Map;
+
+import ijp.Picture;
+import ijp.service.Service;
+import ijp.service.ServiceFromProperties;
+
+/**
+ * A proxy service for the PictureViewer application which provides a cache to store picture
+ * from the base service (this is useful for reducing latency).
+ * <p>The following properties are supported:
+ * <ul>
+ * <li><code>CacheProxy.base_service</code> - the class to use for the base service if not specified in the constructor.</li>
+ * </ul>
+ * <p>Source code for MyCacheProxy.java is included in the assignment zip file.
+ *
+ * @author  Jiayang Lai
+ * @version 1.0, 29 Oct 2015
+ */
+public class MyCacheProxy implements Service {
+	private Service baseService = null;
+	private Map<String, Picture> cachemap = new HashMap<String, Picture>();
+	private Picture picture;
+	
+	public MyCacheProxy(Service baseService) {
+		this.baseService = baseService;
+	}
+	
+	public MyCacheProxy() {
+		baseService = new ServiceFromProperties("CacheProxy.base_service");
+	}
+
+	
+	/**
+	 * Return a picture from the service or form the cache.
+	 *
+	 * @param subject the requested subject
+	 * @param index the index of the picture within all pictures for the requested subject
+	 *
+	 * @return the picture
+	 */
+	public Picture getPicture(String subject, int index) {
+		if(cachemap.containsKey(subject+","+index)){
+			picture = cachemap.get(subject+","+index);
+		}
+		else if(!cachemap.containsKey(subject+","+index)){
+			picture = baseService.getPicture(subject, index);
+			cachemap.put(subject+","+index, picture);
+		}
+		
+	return picture;
+	}
+
+	
+	/**
+	 * Return a textual name to identify the service.
+	 *
+	 * @return the name of the service
+	 */
+	@Override
+	public String serviceName() {
+		return "Caching " + baseService.serviceName();
+	}
+}
+

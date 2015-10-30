@@ -1,0 +1,86 @@
+// IJP Assignment 1, Version 1.0, 29 Oct 2015
+package ijp.controller;
+
+
+import java.util.HashMap;
+import ijp.Picture;
+import ijp.service.Service;
+import ijp.service.ServiceFromProperties;
+import ijp.view.View;
+import ijp.view.ViewFromProperties;
+import ijp.utils.Properties;
+
+/**
+ * A controller for the PictureViewer application.
+ * 
+ * <p>The following properties are supported:
+ * <ul>
+ * <li><code>MyController.index</code> - the index to use for the "select" method .</li>
+ * <li><code>MyController.subjects</code> - the subjects to use for searching picture .</li>
+ * </ul>
+ * <p>Source code for MyController.java is included in the assignment zip file.
+ *
+ *
+ * @author Jiayang Lai
+ * @version 1.0
+ */
+public class MyController implements Controller {
+
+	private View view;
+	private Service service;
+	private HashMap<Integer,String> hm;
+	private String subjects;
+		
+	/**
+	 * Start the controller.
+	 */
+	public void start() {
+
+		// create the view and the service objects
+		view = new ViewFromProperties(this);
+		service = new ServiceFromProperties();
+		hm = new HashMap<Integer,String>();
+		this.addSubject();
+		
+		// start the interface
+		view.start();
+	}
+
+	/**
+	 * Add subjects to HashMap.
+	 */
+	public void addSubject() {
+		subjects=Properties.get("MyController.subjects");
+		String a[] = subjects.trim().split(",");
+		for(int i = 0; i < a.length; i++) {
+			a[i]=a[i].trim();
+			hm.put(view.addSelection(a[i]), a[i]);
+	} 
+		
+		
+		
+	}
+	
+	/**
+	 * Handle the specified selection from the interface.
+	 *
+	 * @param selectionID the id of the selected item
+	 */
+	public void select(int selectionID) {
+		
+		// a picture corresponding to the selectionID
+		// by default, this is an empty picture
+		// (this is used if the selectionID does not match)
+		Picture picture = new Picture();
+
+		// create a picture corresponding to the selectionID
+
+	    	if (hm.containsKey(selectionID)) {
+				picture = service.getPicture(hm.get(selectionID),Properties.getInt("MyController.index"));
+			}
+	    
+		
+		// show the picture in the interface
+		view.showPicture(picture);
+	}
+}

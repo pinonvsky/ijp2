@@ -1,0 +1,217 @@
+// IJP Assignment 1, Version 1.0, 29 Oct 2015
+package ijp.test;
+
+import static org.junit.Assert.*;
+
+
+
+
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+
+import org.junit.Test;
+
+import ijp.Picture;
+import ijp.proxy.CacheProxy;
+import ijp.proxy.CacheProxy1;
+import ijp.proxy.CacheProxy2;
+import ijp.proxy.CacheProxy3;
+import ijp.proxy.MyCacheProxy;
+import ijp.service.Service;
+import ijp.service.ServiceFromProperties;
+import ijp.utils.Properties;
+
+
+/**
+ * A test for testing a cache proxy for the PictureViewer application.
+ * 
+ * @author Jiayang Lai
+ * @version 1.0
+ */
+public class MyCacheProxyTest implements Service {
+	
+
+	private Service proxy = new MyCacheProxy();//change the name of cache proxy here to test different proxy
+
+	/**
+	 * Test that requests for the same subject and index return the same image.
+	 */
+	@Test
+	public void equalityTest() {
+
+		Picture firstPicture = proxy.getPicture("equalityTest",2);
+		Picture secondPicture = proxy.getPicture("equalityTest",2);
+		assertTrue(
+				"different picture returned for same subject (and index)",
+				firstPicture.equals(secondPicture));
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same service name.
+	 */
+	@Test
+	public void serviceNameTest() {
+		Service requiredService = new ServiceFromProperties("CacheProxy.base_service");
+		String requiredServiceName = "Caching " + requiredService.serviceName();
+		String exactServiceName = proxy.serviceName();
+		assertTrue(
+				"different service name returned for same subject (and index)",
+				requiredServiceName.equals(exactServiceName));
+	}
+	
+	/**
+	 * Test that requests for the same subject and picture return the same index.
+	 */
+	@Test
+	public void indexTest() {
+		int requiredIndex = Properties.getInt("index");
+		proxy.getPicture("indexTest",requiredIndex); //first time getPicture
+		int cacheIndex = proxy.getPicture("indexTest",requiredIndex).index();
+		assertTrue(
+				"different index returned for same picture (and subject)",
+				requiredIndex == cacheIndex);
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same image.
+	 */
+	@Test
+	public void imageTest() {
+		Image firstImage = proxy.getPicture("imageTest",2).image();
+        Image secondImage = proxy.getPicture("imageTest",2).image();
+		assertTrue(
+				"different image returned for same subject (and index)",
+				firstImage.equals(secondImage));
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same height of image.
+	 */
+	@Test
+	public void getHeightTest() {
+		double firstHeight = proxy.getPicture("imageTest",2).image().getHeight();
+        double secondHeight = proxy.getPicture("imageTest",2).image().getHeight();
+		assertTrue(
+				"different height of image returned for same subject (and index)",
+				firstHeight == secondHeight);
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same width of image.
+	 */
+	@Test
+	public void getWidthTest() {
+		double firstHeight = proxy.getPicture("imageTest",2).image().getWidth();
+        double secondHeight = proxy.getPicture("imageTest",2).image().getWidth();
+		assertTrue(
+				"different width of image returned for same subject (and index)",
+				firstHeight == secondHeight);
+	}
+	
+	
+	/**
+	 * Test that requests for the same subject and index return the same pixel reader of image.
+	 */
+	@Test
+	public void getPixelReaderTest() {
+		PixelReader firstPixelReader = proxy.getPicture("imageTest",2).image().getPixelReader();
+        PixelReader secondPixelReader = proxy.getPicture("imageTest",2).image().getPixelReader();
+		assertTrue(
+				"different pixel reader returned for same subject (and index)",
+				firstPixelReader.equals(secondPixelReader));
+	}
+	
+	
+	/**
+	 * Test that requests for the same subject and index return the same error property of image.
+	 */
+	@Test
+	public void errorPropertyTest() {
+		ReadOnlyBooleanProperty firstErrorProperty = proxy.getPicture("imageTest",2).image().errorProperty();
+        ReadOnlyBooleanProperty secondErrorProperty = proxy.getPicture("imageTest",2).image().errorProperty();
+		assertTrue(
+				"different error porperty of image returned for same subject (and index)",
+				firstErrorProperty.equals(secondErrorProperty));
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same description.
+	 */
+	@Test
+	public void descriptionTest() {
+		String firstDescription = proxy.getPicture("imageTest",2).description();
+		String secondDescription = proxy.getPicture("imageTest",2).description();
+		assertTrue(
+				"different destription returned for same subject (and index)",
+				firstDescription.equals(secondDescription));
+	}
+
+	/**
+	 * Test that requests for the same subject and index return the same error message.
+	 */
+	@Test
+	public void errorMessageTest() {
+		String firstErrorMessage = proxy.getPicture("image",1).errorMessage();
+		String secondErrorMessage = proxy.getPicture("image",1).errorMessage();
+		assertTrue(
+				"different error message returned for same subject (and index)",
+				firstErrorMessage == secondErrorMessage);
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same source.
+	 */
+	@Test
+	public void SourceTest() {
+		String firstSource = proxy.getPicture("imageTest",2).source();
+		String secondSource = proxy.getPicture("imageTest",2).source();
+		assertTrue(
+				"different source returned for same subject (and index)",
+				firstSource.equals(secondSource));
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same subject.
+	 */
+	@Test
+	public void SubjectTest() {
+		String firstSubject = proxy.getPicture("imageTest",2).subject();
+		String secondSubject = proxy.getPicture("imageTest",2).subject();
+		assertTrue(
+				"different subject returned for same subject (and index)",
+				firstSubject.equals(secondSubject));
+	}
+	
+	/**
+	 * Test that requests for the same subject and index return the same validity.
+	 */
+	@Test
+	public void isValidTest() {
+		Boolean firstIsValid = proxy.getPicture("imageTest",2).isValid();
+		Boolean secondIsValid = proxy.getPicture("imageTest",2).isValid();
+		assertTrue(
+				"different validity returned for same subject (and index)",
+				firstIsValid.equals(secondIsValid));
+	}
+
+	
+	/**
+	 * Return a picture from the base service but not here.
+	 */
+	public Picture getPicture(String subject, int index) {
+		return null;
+	}
+	
+	/**
+	 * Return a textual name to identify the simulated service.
+	 *
+	 * @return the name of the service ("CacheProxy Test")
+	 */
+	@Override
+	public String serviceName() {
+		return "CacheProxy Test with " + proxy.serviceName();
+	}
+	
+	
+}
